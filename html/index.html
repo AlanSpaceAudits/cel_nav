@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Fictitious Observer at the Earth's Centre — Aether Cosmology Research Group</title>
+<style>
+  :root{
+    --bg:#05060c; --bg2:#0a0d18; --panel:rgba(18,22,38,.72);
+    --ink:#e8ecf6; --muted:#9aa6c4; --line:rgba(140,160,210,.16);
+    --gold:#e9c46a; --gold-soft:rgba(233,196,106,.16);
+    --cyan:#5ad1e6; --cyan-soft:rgba(90,209,230,.12);
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+    --sans:"Inter","Helvetica Neue",Arial,system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+       line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  canvas#stars{position:fixed;inset:0;z-index:0;display:block}
+  .wrap{position:relative;z-index:1}
+
+  /* HERO — quote image first, then title/description below */
+  .hero{position:relative;display:flex;flex-direction:column;padding:0 0 30px;overflow:hidden}
+  .hero-top{padding:26px clamp(20px,6vw,90px) 20px;display:flex;align-items:center;
+        justify-content:space-between;gap:18px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:14px}
+  .brand .logo{width:92px;height:92px;border-radius:50%;flex:none;
+        box-shadow:0 0 0 1px var(--line),0 6px 22px rgba(0,0,0,.5)}
+  .toplinks{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .toplinks a{font-family:var(--sans);font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;
+        color:var(--ink);text-decoration:none;border:1px solid var(--line);border-radius:30px;
+        padding:8px 16px;transition:.22s;background:rgba(0,0,0,.25)}
+  .toplinks a:hover{border-color:var(--gold);color:var(--gold);transform:translateY(-2px)}
+  .badge{display:inline-flex;align-items:center;gap:10px;font-family:var(--sans);
+         font-size:.72rem;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);
+         border:1px solid var(--gold-soft);background:rgba(0,0,0,.35);
+         padding:9px 16px;border-radius:40px;backdrop-filter:blur(6px)}
+  .badge .dot{width:7px;height:7px;border-radius:50%;background:var(--gold);box-shadow:0 0 10px var(--gold)}
+  .hero-quote{margin:0;width:100%;max-width:1500px;align-self:center;
+        padding:0 clamp(12px,3vw,40px)}
+  .hero-quote img{width:100%;height:auto;display:block;border-radius:14px;cursor:zoom-in;
+        border:1px solid var(--line);box-shadow:0 30px 80px rgba(0,0,0,.6)}
+  .hero-quote figcaption{text-align:center;color:var(--muted);font-size:.78rem;
+        letter-spacing:.04em;margin-top:12px;font-style:italic}
+  .hero-title{padding:48px clamp(20px,6vw,90px) 0;max-width:1000px;margin:0 auto;width:100%;text-align:center}
+  .hero-title h1{font-family:var(--serif);font-weight:600;line-height:1.05;
+        font-size:clamp(2.4rem,6vw,5rem);margin:0 0 .4em;letter-spacing:-.01em}
+  .hero-title h1 em{font-style:italic;color:var(--gold)}
+  .hero-title p{font-size:clamp(1.02rem,1.7vw,1.28rem);color:#cdd5ea;max-width:780px;margin:0 auto}
+  .scroll-cue{text-align:center;padding-top:40px;color:var(--muted);
+        font-size:.7rem;letter-spacing:.3em;text-transform:uppercase}
+  .scroll-cue span{display:block;font-size:1.3rem;animation:bob 1.8s ease-in-out infinite;color:var(--gold)}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
+
+  /* SECTIONS */
+  section.band{padding:clamp(60px,9vw,120px) clamp(20px,6vw,90px);position:relative}
+  .center{max-width:1180px;margin:0 auto}
+  .kicker{font-size:.72rem;letter-spacing:.34em;text-transform:uppercase;color:var(--cyan);margin:0 0 14px}
+  h2.section-h{font-family:var(--serif);font-weight:600;font-size:clamp(1.9rem,3.6vw,3rem);
+        margin:0 0 .5em;line-height:1.12;letter-spacing:-.01em}
+  .lede{font-size:clamp(1.05rem,1.5vw,1.22rem);color:#c9d2e8;max-width:880px}
+  .lede strong{color:var(--ink)}
+
+  .thesis{background:linear-gradient(160deg,var(--cyan-soft),transparent 60%);
+        border:1px solid var(--line);border-left:3px solid var(--gold);
+        border-radius:16px;padding:30px 34px;margin:34px 0 0;max-width:920px;
+        backdrop-filter:blur(4px)}
+  .thesis p{margin:0;font-size:1.12rem;color:#eef1fa}
+  .thesis .mark{color:var(--gold);font-weight:600}
+
+  /* TOC */
+  .toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:30px}
+  .toc a{display:block;text-decoration:none;color:var(--ink);background:var(--panel);
+        border:1px solid var(--line);border-radius:14px;padding:18px 20px;transition:.25s;backdrop-filter:blur(8px)}
+  .toc a:hover{border-color:var(--gold);transform:translateY(-3px);box-shadow:0 14px 40px rgba(0,0,0,.5)}
+  .toc a .n{font-family:var(--serif);font-size:1.5rem;color:var(--gold);display:block}
+  .toc a .t{font-size:.96rem;color:#d7deef}
+  .toc a .c{font-size:.78rem;color:var(--muted);margin-top:4px}
+
+  /* TIER HEADER */
+  .tier{padding:clamp(48px,7vw,96px) clamp(20px,6vw,90px) 0}
+  .tier-head{max-width:1180px;margin:0 auto;border-top:1px solid var(--line);padding-top:30px}
+  .tier-head .tno{font-family:var(--serif);font-size:1rem;color:var(--gold);letter-spacing:.2em}
+  .tier-head h3{font-family:var(--serif);font-weight:600;font-size:clamp(1.6rem,3vw,2.4rem);margin:.2em 0 .25em}
+  .tier-head p{color:var(--muted);max-width:780px;margin:0}
+
+  /* CARDS */
+  .cards{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:30px;padding-top:34px}
+  .card{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:0;
+        background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;
+        backdrop-filter:blur(10px);transition:.3s}
+  .card:hover{border-color:rgba(233,196,106,.4);box-shadow:0 24px 60px rgba(0,0,0,.55)}
+  .card.flip{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr)}
+  .card.flip .c-body{order:2}.card.flip .c-fig{order:1}
+  .c-body{padding:clamp(24px,3vw,38px)}
+  .c-tags{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
+  .tag{font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);
+       border:1px solid var(--cyan-soft);background:var(--cyan-soft);padding:4px 10px;border-radius:30px}
+  .tag.gold{color:var(--gold);border-color:var(--gold-soft);background:var(--gold-soft)}
+  .c-cite{font-family:var(--serif);font-size:1.32rem;line-height:1.3;margin:0 0 4px;color:#fff}
+  .c-apa{font-size:.85rem;color:var(--muted);margin:0 0 20px;font-style:italic}
+  blockquote.q{margin:0 0 16px;padding:14px 18px;border-left:3px solid var(--gold);
+       background:linear-gradient(90deg,var(--gold-soft),transparent);border-radius:0 10px 10px 0;
+       font-family:var(--serif);font-size:1.06rem;color:#f3eede}
+  blockquote.q .pg{display:block;margin-top:9px;font-family:var(--sans);font-style:normal;
+       font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--gold)}
+  .c-sum{font-size:.97rem;color:#c6cee4}
+  .c-sum .hl{color:var(--gold);font-weight:600}
+  .c-fig{position:relative;background:#02030a;min-height:300px;overflow:hidden}
+  .c-slide{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;
+       opacity:0;transition:opacity .4s;cursor:zoom-in;pointer-events:none}
+  .c-slide.active{opacity:1;pointer-events:auto}
+  .c-fig .figcap{position:absolute;left:0;right:0;bottom:0;font-size:.74rem;color:#eef1fa;z-index:3;
+       background:linear-gradient(0deg,rgba(0,0,0,.9),transparent);padding:30px 16px 12px;pointer-events:none}
+  .c-count{position:absolute;top:12px;right:14px;z-index:3;background:rgba(0,0,0,.6);
+       color:var(--gold);font-size:.72rem;letter-spacing:.06em;padding:4px 11px;border-radius:30px;
+       border:1px solid var(--gold-soft)}
+  .c-year{position:absolute;top:12px;left:14px;z-index:3;font-family:var(--serif);font-weight:600;
+       font-size:1.05rem;letter-spacing:.02em;color:var(--gold);background:rgba(0,0,0,.62);
+       padding:4px 13px;border-radius:30px;border:1px solid var(--gold-soft)}
+  .c-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:4;width:42px;height:42px;
+       border-radius:50%;border:1px solid var(--line);background:rgba(8,10,20,.72);color:#fff;
+       font-size:1.4rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;
+       transition:.2s;backdrop-filter:blur(4px)}
+  .c-nav:hover{background:var(--gold);color:#05060c;border-color:var(--gold)}
+  .c-nav.prev{left:12px}.c-nav.next{right:12px}
+  .c-dots{position:absolute;bottom:42px;left:0;right:0;z-index:3;display:flex;gap:7px;justify-content:center}
+  .c-dots i{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.35);transition:.2s}
+  .c-dots i.on{background:var(--gold);transform:scale(1.25)}
+
+  /* FEATURE (themed graphic) */
+  .feature{max-width:1180px;margin:34px auto 0;border-radius:18px;overflow:hidden;
+        border:1px solid var(--line);position:relative}
+  .feature img{width:100%;display:block;cursor:zoom-in}
+
+  /* WEB + FOOTER */
+  .weblist{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+  .web{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;backdrop-filter:blur(8px)}
+  .web h4{margin:0 0 8px;font-size:1rem;color:var(--gold)}
+  .web q{font-family:var(--serif);color:#dfe5f4;font-size:.96rem}
+  .web a{display:inline-block;margin-top:12px;color:var(--cyan);text-decoration:none;font-size:.82rem;word-break:break-all}
+  .web a:hover{text-decoration:underline}
+  footer{padding:70px clamp(20px,6vw,90px);border-top:1px solid var(--line);color:var(--muted);text-align:center}
+  footer .fmark{font-family:var(--serif);color:var(--gold);font-size:1.2rem;margin-bottom:8px}
+  footer small{display:block;margin-top:14px;font-size:.78rem;opacity:.7}
+
+  /* LIGHTBOX */
+  .lb{position:fixed;inset:0;z-index:50;background:rgba(2,3,8,.93);display:none;
+      align-items:center;justify-content:center;padding:30px;cursor:zoom-out;backdrop-filter:blur(4px)}
+  .lb.on{display:flex}
+  .lb img{max-width:95vw;max-height:92vh;border-radius:8px;box-shadow:0 30px 90px rgba(0,0,0,.8)}
+  .lb .x{position:absolute;top:20px;right:28px;color:#fff;font-size:2rem;cursor:pointer;opacity:.8;z-index:2}
+  .lb .lbnav{position:absolute;top:50%;transform:translateY(-50%);width:54px;height:54px;border-radius:50%;
+       border:1px solid rgba(255,255,255,.25);background:rgba(20,24,40,.7);color:#fff;font-size:1.8rem;
+       cursor:pointer;display:none;align-items:center;justify-content:center;z-index:2}
+  .lb.multi .lbnav{display:flex}
+  .lb .lbnav.prev{left:24px}.lb .lbnav.next{right:24px}
+  .lb .lbnav:hover{background:var(--gold);color:#05060c}
+  .lb .lbcount{position:absolute;bottom:26px;left:0;right:0;text-align:center;color:#cfd6ea;
+       font-size:.82rem;letter-spacing:.08em;z-index:2}
+
+  @media(max-width:820px){
+    .card,.card.flip{grid-template-columns:1fr}
+    .card.flip .c-body{order:1}.card.flip .c-fig{order:2}
+    .c-fig{min-height:200px}
+  }
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="wrap">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-top">
+      <div class="brand">
+        <img class="logo" src="img/aether_cosmology_logo.png" alt="Aether Cosmology Research Group logo">
+        <span class="badge"><span class="dot"></span>Aether Cosmology Research Group</span>
+      </div>
+      <nav class="toplinks">
+        <a href="https://spaceaudits.net" target="_blank" rel="noopener">spaceaudits.net</a>
+        <a href="https://adl.place" target="_blank" rel="noopener">adl.place</a>
+      </nav>
+    </div>
+    <figure class="hero-quote">
+      <img src="img/copernicus_revolutions_opener.png" alt="Copernicus, On the Revolutions of the Heavenly Spheres (Prometheus Books, 1543): the Osiander foreword on hypotheses and certainty in astronomy">
+    </figure>
+    <div class="hero-title">
+      <h1>The <em>Fictitious Observer</em><br>at the Earth's Centre</h1>
+      <p>How celestial navigation and positional astronomy define the geocentric position of a star: not by what a real observer measures on the surface, but by what an imaginary observer at the centre of the Earth is said to see.</p>
+    </div>
+    <div class="scroll-cue">Scroll<span>&#8595;</span></div>
+  </header>
+
+  <!-- INTRO -->
+  <section class="band">
+    <div class="center">
+      <p class="kicker">The Convention</p>
+      <h2 class="section-h">One reference point, stated the same way for eight centuries</h2>
+      <p class="lede">From the medieval <em>Sphere</em> of Sacrobosco to the 2019 <em>American Practical Navigator</em>, the discipline reports the same thing in the same way. A celestial body's altitude is referred to an observer at the <strong>centre of the Earth</strong>, that centre is declared identical to the <strong>centre of the celestial sphere</strong>, and the body's ground point, its <strong>geographic position (GP)</strong>, is defined as the spot where a straight line from the body to that centre pierces the surface.</p>
+      <div class="thesis">
+        <p><span class="mark">The reference observer is fictitious.</span> The geocentric altitude is what an observer at the Earth's centre would measure. The real surface observer enters the procedure only as a measurement to be reduced inward to that centre. This page collects the primary and mainstream sources that say so, verbatim, with page-referenced screenshots.</p>
+      </div>
+      <p class="kicker" style="margin-top:38px">Jump to a source · newest to oldest</p>
+      <div class="toc" id="toc"></div>
+    </div>
+  </section>
+
+  <div id="render"></div>
+
+  <!-- WEB -->
+  <section class="band">
+    <div class="center" style="margin-bottom:30px">
+      <p class="kicker">Mainstream Corroboration</p>
+      <h2 class="section-h">Web references</h2>
+      <p class="lede">Reference works and encyclopaedias state the geocentric convention directly.</p>
+    </div>
+    <div class="weblist" id="weblist"></div>
+  </section>
+
+  <footer>
+    <div class="fmark">Aether Cosmology Research Group</div>
+    <div>Citation corpus: 21 source works and 4 web references, c. 1230 to the present. Direct quotes, page numbers, and screenshots verified against each source.</div>
+  </footer>
+</div>
+
+<div class="lb" id="lb">
+  <span class="x">&times;</span>
+  <button class="lbnav prev" aria-label="previous">&#8249;</button>
+  <img alt="enlarged source page">
+  <button class="lbnav next" aria-label="next">&#8250;</button>
+  <div class="lbcount"></div>
+</div>
+
+<script>
+/* ---------- starfield ---------- */
+(function(){
+  const c=document.getElementById('stars'),x=c.getContext('2d');let w,h,st=[];
+  function rs(){w=c.width=innerWidth;h=c.height=innerHeight;st=[];const n=Math.min(220,(w*h)/9000);
+    for(let i=0;i<n;i++)st.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.3+.2,
+      a:Math.random(),s:Math.random()*.015+.003});}
+  function draw(){x.clearRect(0,0,w,h);for(const p of st){p.a+=p.s;const tw=.4+.6*Math.abs(Math.sin(p.a));
+    x.beginPath();x.arc(p.x,p.y,p.r,0,7);x.fillStyle='rgba(220,228,255,'+tw+')';x.fill();}
+    requestAnimationFrame(draw);}
+  addEventListener('resize',rs);rs();draw();
+})();
+
+/* ---------- data ---------- */
+const CITES=[
+ {id:'sextant',year:2023,ybadge:'n.d.',tags:['gold:fictitious observer','GP'],
+    cite:'Intro to Celestial Navigation and Sextant Usage',
+    apa:'bluewatermiles.com. (n.d.). Intro to celestial navigation and sextant.',
+    quotes:[['the observer is located at the center of a fictitious sphere, the so-called celestial sphere (Fig. 1)... GP is the point where a straight line from the celestial body to the center of the earth (C) intersects the earth’s surface.','pp. 1-2']],
+    sum:'A teaching primer repeats the construction exactly: a fictitious sphere, the observer at its centre, and <span class="hl">GP defined by the body-to-centre line</span>.',
+    imgs:[['Celestial_Navigation_Sextant_Usage_p1_gp_centre_of_earth_hl.png','Sextant Usage, p. 1 — fictitious sphere / GP'],['Celestial_Navigation_Sextant_Usage_p2_geocentric_coordinates_hl.png','Sextant Usage, p. 2 — geocentric coordinates']]},
+ {id:'bowditch',year:2019,ybadge:'2019',tags:['celestial sphere','GP','geocentric altitude'],
+    cite:'Bowditch / NGA (2019) — American Practical Navigator',
+    apa:'National Geospatial-Intelligence Agency. (2019). The American practical navigator (Bowditch) (Pub. No. 9, Vol. I). NGA.',
+    quotes:[['The celestial sphere... is an imaginary sphere of infinite radius with the Earth at its center... The zenith and nadir are the extremities of a diameter of the celestial sphere through the observer and the common center of the Earth and the celestial sphere.','sec. 1325'],['the geographical position (GP) of the body (the point on the Earth’s surface having the body in its zenith).','sec. 1331']],
+    sum:'The official US navigation reference <span class="hl">identifies the centre of the Earth with the centre of the celestial sphere</span> and defines GP from it.',
+    imgs:[['2019_Bowditch_Navigator_p233_celestial_sphere_earth_center_hl.png','Bowditch 2019, sec. 1325 (p. 233)'],['2019_Bowditch_Navigator_p241_geographical_position_hl.png','Bowditch 2019, sec. 1331 (p. 241) — GP']]},
+ {id:'burch',year:2017,ybadge:'2017',tags:['GP'],
+    cite:'Burch (2017) — Celestial Navigation: A Complete Home Study Course',
+    apa:'Burch, D. (2017). Celestial navigation: A complete home study course (2nd ed.). Starpath Publications.',
+    quotes:[['Imagine that each of these stars... sent out a laser beam that went straight through the center of the earth... That mark is called the geographical position of that star.','p. 109']],
+    sum:'The same construction taught with a modern image: <span class="hl">the defining ray passes through the Earth’s centre</span>.',
+    img:'2017_Burch_Celestial_Navigation_p109_laser_through_earth_centre_hl.png',cap:'Burch, p. 109'},
+ {id:'umland',year:2015,ybadge:'2015',tags:['gold:fictitious observer','geocentric altitude','GP'],
+    cite:'Umland (2015) — A Short Guide to Celestial Navigation',
+    apa:'Umland, H. (2015). A short guide to celestial navigation. celnav.de.',
+    quotes:[['Calculations of celestial navigation always refer to the geocentric altitude of a body, the altitude measured by a fictitious observer being on the plane of the celestial horizon and at the center of the earth which coincides with the center of the celestial sphere.','p. 1-1']],
+    sum:'The single cleanest statement of the whole convention. The reference altitude for all of celestial navigation is <span class="hl">what a fictitious central observer would measure</span>, and that centre is identified with the centre of the celestial sphere.',
+    img:'umland_fictitious_observer_quote.png',cap:'Umland, Ch. 1 (highlighted)'},
+ {id:'seidelmann2013',year:2013,ybadge:'2013',tags:['gold:fictitious observer','geocentric coordinates'],
+    cite:'Urban & Seidelmann (2013) — Explanatory Supplement to the Astronomical Almanac (3rd ed.)',
+    apa:'Urban, S. E., & Seidelmann, P. K. (Eds.). (2013). Explanatory supplement to the Astronomical Almanac (3rd ed.). Mill Valley, CA: University Science Books.',
+    quotes:[['The apparent and intermediate places... can be thought of as the position of an object for a fictitious observer located at the centre of a transparent non-refracting Earth... the fictitious observer at the Earth’s centre.','§7.4.3, p. 293'],['geocentric: with reference to, or pertaining to, the center of the Earth.','Glossary, p. 642'],['geocentric coordinates: ... Celestial coordinates given with respect to the center of the Earth.','Glossary, p. 642']],
+    sum:'The authoritative reference behind the national almanacs states it in the body text: the tabulated apparent place is <span class="hl">the position seen by a fictitious observer at the centre of a transparent non-refracting Earth</span>. Its glossary then defines geocentric as referred to the center of the Earth.',
+    imgs:[['2013_Urban_Seidelmann_Explanatory_Supplement_p293_fictitious_observer_earth_centre.png','§7.4.3, p. 293 — fictitious observer at the Earth’s centre'],['2013_Urban_Seidelmann_Explanatory_Supplement_p642_geocentric_definition.png','Glossary, p. 642 — geocentric'],['2013_Urban_Seidelmann_Explanatory_Supplement_p642_geocentric_coordinates.png','Glossary, p. 642 — geocentric coordinates']]},
+ {id:'case',year:2012,ybadge:'2012',tags:['GP','celestial sphere'],
+    cite:'Case (2012) — Astro Navigation Demystified',
+    apa:'Case, J. (2012). Astro navigation demystified.',
+    quotes:[['Imagine that we put a light at the centre of the Earth and that we use this light to project the surface of the Earth onto the Celestial sphere.','p. 10'],['U is the point on the Earth’s surface immediately below the celestial body and is called the ‘Geographical Position’ (GP).','p. 11']],
+    sum:'The projection is run <span class="hl">from the centre outward</span>. The GP is the shadow the centre casts onto the surface.',
+    imgs:[['2012_Case_Astro_Navigation_p10_light_at_earth_centre_hl.png','Case, p. 10 — light at the Earth centre'],['2012_Case_Astro_Navigation_p11_geographical_position_hl.png','Case, p. 11 — Geographical Position']]},
+ {id:'sampson',year:2003,ybadge:'2003',tags:['geocentric altitude','peer-reviewed'],
+    cite:'Sampson et al. (2003) — Variability in Astronomical Refraction',
+    apa:'Sampson, R. D., Lozowski, E. P., Peterson, A. E., & Hube, D. P. (2003). Variability in the astronomical refraction of the rising and setting Sun. PASP, 115, 1256-1261.',
+    quotes:[['a₀ is the geocentric altitude of the center of the geometric Sun (i.e., the unrefracted Sun) (see Fig. 1).','pp. 1256-1257']],
+    sum:'The geocentric altitude is not an antique term. It is the <span class="hl">working reference quantity in modern peer-reviewed</span> refraction research.',
+    img:'2003_Sampson_Variability_Astronomical_Refraction_p1257_geocentric_altitude_hl.png',cap:'Sampson et al., PASP 115'},
+ {id:'part3',year:2002,ybadge:'n.d.',tags:['gold:fictitious observer','celestial sphere'],
+    cite:'Bowditch / Part 3 — Celestial Navigation',
+    apa:'National Geospatial-Intelligence Agency. (n.d.). The American practical navigator (Bowditch): Part 3, Celestial navigation (Pub. No. 9, ch. 14-20).',
+    quotes:[['The semidiameter used in the almanacs is for a fictitious observer at the center of the Earth.','p. 300'],['celestial bodies are located on the inner surface of a vast hollow sphere of infinite radius, with the Earth at its center. This is the celestial sphere.','p. 235']],
+    sum:'The standard US navigation manual states outright that <span class="hl">almanac data are computed for a fictitious central observer</span> and that the celestial sphere is an avowedly geocentric model.',
+    imgs:[['Part3_Celestial_Navigation_p300_fictitious_observer_semidiameter_hl.png','Bowditch / Part 3, p. 300 — fictitious observer'],['Part3_Celestial_Navigation_p235_celestial_sphere_infinite_radius_hl.png','Bowditch / Part 3, p. 235 — geocentric sphere']]},
+ {id:'ds',year:1989,ybadge:'1989',tags:['geocentric coordinates'],
+    cite:'Duffett-Smith (1989) — Practical Astronomy with your Calculator',
+    apa:'Duffett-Smith, P. (1989). Practical astronomy with your calculator (3rd ed.). Cambridge University Press.',
+    quotes:[['These coordinates are the ones which would be observed from the centre of the Earth, called geocentric coordinates, and if the celestial body is at a very great distance from the Earth, they are also the coordinates which would be measured by anyone on the Earth’s surface.','p. 66']],
+    sum:'Explicit about the assumption that closes the loop: for distant bodies the central-observer coordinates are <span class="hl">simply declared equal</span> to the surface coordinates.',
+    img:'1989_DuffettSmith_Practical_Astronomy_p66_geocentric_coordinates_hl.png',cap:'Duffett-Smith, p. 66'},
+ {id:'slocum',year:1985,ybadge:'1985',tags:['celestial sphere','observer as point'],
+    cite:'Slocum (1985) — Celestial Navigation',
+    apa:'Slocum, S. (1985). Celestial navigation.',
+    quotes:[['CELESTIAL SPHERE - ... a shell of zero thickness having a radius of one Celestial Unit with the Observer of zero dimension at its center and upon which all celestial bodies are located.','p. viii']],
+    sum:'The observer is reduced to a <span class="hl">dimensionless point at the centre</span>. The real, located observer disappears by definition.',
+    img:'1985_Slocum_Celestial_Navigation_pviii_celestial_sphere_definition_hl.png',cap:'Slocum, glossary p. viii'},
+ {id:'taff',year:1981,ybadge:'1981',tags:['geocentric coordinates','celestial sphere'],
+    cite:'Taff (1981) — Computational Spherical Astronomy',
+    apa:'Taff, L. G. (1981). Computational spherical astronomy. Wiley.',
+    quotes:[['A coordinate system situated at the observer is called topocentric, one situated at the center of the Earth is called geocentric, and one situated at the center of the Sun is called heliocentric.','p. 5'],['we are at the center of a vast spherical surface on which the stars have been placed. This surface is called the celestial sphere. We regard its radius to be infinite.','p. 6']],
+    sum:'A graduate text fixes the vocabulary: geocentric means centred on the Earth. The <span class="hl">infinite radius</span> is what licenses treating the surface angle and the central angle as equal.',
+    imgs:[['1981_Taff_Computational_Spherical_Astronomy_p5_topocentric_geocentric_defs_hl.png','Taff, p. 5 — topocentric / geocentric / heliocentric'],['1981_Taff_Computational_Spherical_Astronomy_p6_celestial_sphere_infinite_hl.png','Taff, p. 6 — celestial sphere, infinite radius']]},
+ {id:'explsupp1961',year:1961,ybadge:'1961',tags:['gold:fictitious observer','geocentric altitude','geographic position'],
+    cite:'Explanatory Supplement (1961) — to the Astronomical Ephemeris',
+    apa:'Her Majesty’s Nautical Almanac Office & U.S. Naval Observatory. (1961). Explanatory supplement to the Astronomical Ephemeris and the American Ephemeris and Nautical Almanac. London: HMSO.',
+    quotes:[['For geocentric coordinates the apparent position is the direction in which an observer at the centre of the Earth would see the object, and refraction does not enter.','p. 25'],['The geocentric positions of stars are similarly affected by the annual parallax due to the displacement of the Earth from the centre of the Sun.','p. 57'],['...[the transit observation] can be compared with the apparent geocentric position of its centre: refraction, parallax, vertical semi-diameter...','p. 137']],
+    sum:'The predecessor national reference is explicit: <span class="hl">the apparent position is what an observer at the centre of the Earth would see</span>. Star positions are reckoned geocentrically.',
+    imgs:[['1961_Explanatory_Supplement_p25_geocentric_apparent_observer.png','1961 Suppl., p. 25 — observer at the centre'],['1961_Explanatory_Supplement_p57_geocentric_star_parallax.png','1961 Suppl., p. 57 — geocentric star positions'],['1961_Explanatory_Supplement_p137_transit_apparent_geocentric.png','1961 Suppl., p. 137 — apparent geocentric position']]},
+ {id:'morse',year:1953,ybadge:'1953',tags:['centre of earth'],
+    cite:'Morse (1953) — Development of Celestial Navigation',
+    apa:'Morse, W. P. (1953). An analysis of the development of celestial navigation [Doctoral dissertation, University of Florida].',
+    quotes:[['O = the center of the earth ... h = the observed altitude, angle BOA ... A = the position of Polaris at the observed time.','p. 66']],
+    sum:'Even the <span class="hl">"observed altitude" is drawn as an angle at O</span>, the centre of the earth, not at the observer’s actual station.',
+    img:'1953_Morse_Development_Celestial_Navigation_p66_center_of_earth_hl.png',cap:'Morse, p. 66'},
+ {id:'proctor',year:1892,ybadge:'1892',tags:['celestial sphere','observer-centre'],
+    cite:'Proctor & Ranyard (1892) — Old and New Astronomy',
+    apa:'Proctor, R. A., & Ranyard, A. C. (1892). Old and new astronomy. Longmans, Green, and Co.',
+    quotes:[['Overhead is the dome of the heavens, which... has in reality no definable shape, but which may be geometrically regarded as a hemisphere around O as centre.','p. 18']],
+    sum:'The sphere <span class="hl">"has in reality no definable shape."</span> It is retained only because it is geometrically convenient around the observer-centre O.',
+    img:'proctor_ranyard_1892_celestial_sphere.png',cap:'Proctor & Ranyard, Fig. 1'},
+ {id:'carpenter',year:1864,ybadge:'1864',tags:['critical primary','centre of earth'],
+    cite:'Carpenter (1864) — Theoretical Astronomy Examined and Exposed',
+    apa:'Carpenter, W. (1864). Theoretical astronomy examined and exposed, by ‘Common Sense’.',
+    quotes:[['if the two plumb-lines were continued downwards, they would meet at a point which would be the centre of the earth, and, then... ‘the whole thing comes quite right.’','p. 96']],
+    sum:'A contemporary critic flags the move directly: the geometry only <span class="hl">"comes quite right" once everything is referred to the assumed centre</span> of the earth.',
+    img:'1864_Carpenter_Theoretical_Astronomy_p96_centre_of_earth_hl.png',cap:'Carpenter, p. 96'},
+ {id:'chauv1',year:1863,ybadge:'1863',tags:['gold:fictitious observer','geocentric place','geocentric altitude'],
+    cite:'Chauvenet (1863) — Spherical & Practical Astronomy, Vol. I',
+    apa:'Chauvenet, W. (1863). A manual of spherical and practical astronomy: Vol. I. Spherical astronomy. J. B. Lippincott & Co.',
+    quotes:[['The places of stars given in the Ephemerides are those in which the stars would be seen by an observer at the centre of the earth, and are called geocentric, or true, places. Those observed from the surface of the earth are called observed, or apparent, places.','Vol. I, p. 103'],['The true or geocentric altitude of the star above the celestial horizon is then the angle SCH, and the apparent altitude is the angle SAP.','Vol. I, p. 104']],
+    sum:'The classic 19th-century treatise names the central-observer position the <span class="hl">"true" place</span> and the real surface observation merely the "apparent" place. The convention is stated as a definition.',
+    imgs:[['1863_Chauvenet_Spherical_Astronomy_Vol1_p103_geocentric_place_hl.png','Chauvenet Vol. I, p. 103 — geocentric / true places'],['1863_Chauvenet_Spherical_Astronomy_Vol1_p104_geocentric_altitude_hl.png','Chauvenet Vol. I, p. 104 — geocentric altitude']]},
+ {id:'chauv2',year:1863,ybadge:'1863',tags:['geocentric reduction','parallax'],
+    cite:'Chauvenet (1863) — Vol. II',
+    apa:'Chauvenet, W. (1863). A manual of spherical and practical astronomy: Vol. II. J. B. Lippincott & Co.',
+    quotes:[['To introduce the geocentric quantities, let π = the moon’s equatorial horizontal parallax... Δ, Δ′ = the moon’s distance from the centre of the earth and the observer respectively.','p. 210']],
+    sum:'The mechanics of moving an observation from the surface to the centre. <span class="hl">Parallax is the bridge</span> that converts the real observer’s angle into the central observer’s angle.',
+    img:'1863_Chauvenet_Spherical_Astronomy_p210_distance_centre_earth_observer_hl.png',cap:'Chauvenet Vol. II, p. 210'},
+ {id:'salmon',year:1777,ybadge:'1777',tags:['doctrine of the sphere','horizon'],
+    cite:'Salmon (1777) — The New Universal Geographical Grammar',
+    apa:'Salmon, T. (1777). The new universal geographical grammar (2nd ed. 1782, J. Spottiswood).',
+    quotes:[['A Spectator standing on the surface of the earth can see only that half of the heavens which seem to be above him... if the apparent plane, or flat, which he stands on, was conceived to be extended till it met the Heavens, it would there be bounded, apparently, by a great circle called the Horizon.','1782 ed., p. 24']],
+    sum:'An 18th-century geography primer builds the same apparatus: a spectator, an apparent plane, a horizon great circle, <span class="hl">zenith and nadir as its poles</span>.',
+    img:'salmon_1777_doctrine_sphere_horizon.png',cap:'Salmon, Doctrine of the Sphere / The Horizon'},
+ {id:'kepler',year:1609,ybadge:'1609',tags:['centre of earth','parallax'],
+    cite:'Kepler (1609) — New Astronomy',
+    apa:'Kepler, J. (1609/1992). New astronomy (W. H. Donahue, Trans.). Cambridge University Press.',
+    quotes:[['by comparing these angles which the observed positions form about K, the centre of the earth and of observation.','Ch. 6, p. 169']],
+    sum:'Kepler reckons the observed angles about K, <span class="hl">"the centre of the earth and of observation"</span>. Centre and observation are run together as one point.',
+    img:'1609_Kepler_New_Astronomy_p169_centre_earth_observation_hl.png',cap:'Kepler, Ch. 6, p. 169'},
+ {id:'copernicus',year:1543,ybadge:'1543',tags:['gold:primary','celestial sphere'],
+    cite:'Copernicus (1543) — On the Revolutions of the Heavenly Spheres',
+    apa:'Copernicus, N. (1543/2010). On the revolutions of the heavenly spheres. Prometheus Books.',
+    quotes:[['So far as hypotheses are concerned, let no one expect anything certain from astronomy, which cannot furnish it, lest he accept as the truth ideas conceived for another purpose, and depart from this study a greater fool than when he entered it. Farewell.','Osiander foreword'],['many have thought it possible to prove by geometrical reasoning that the earth is in the middle of the universe... it serves as their center.','Book I, Ch. 5']],
+    sum:'The foreword that opened modern astronomy already warns its constructions are devices <span class="hl">"conceived for another purpose," not certainties</span>. The geocentric centre is the geometric convention the discipline inherited.',
+    imgs:[['copernicus_revolutions_opener.png','Osiander foreword (Prometheus Books, 1543)'],['1543_Copernicus_Revolutions_Heavenly_Spheres_p14_earth_center_universe_hl.png','Book I, Ch. 5 — earth at the centre (highlighted)']]},
+ {id:'sacro',year:1230,ybadge:'c. 1230',tags:['gold:primary','centre of earth'],
+    cite:'Sacrobosco (c. 1230) — The Sphere',
+    apa:'Sacrobosco, J. de. (c. 1230/1949). The sphere (L. Thorndike, Trans.). University of Chicago Press.',
+    quotes:[['An eye at the earth’s center would see half the sky, and one on the earth’s surface would see the same half. From which it is inferred that the magnitude of the earth from surface to center is inappreciable.','Ch. 1']],
+    sum:'The medieval root states the premise plainly: centre and surface are treated as the same vantage point because the Earth is <span class="hl">"inappreciable" against the heavens</span>. Every later geocentric reduction inherits this.',
+    img:'Sacrobosco_The_Sphere_p5_earth_central_point_universe_hl.png',cap:'Sacrobosco, Ch. 1'}
+];
+
+const WEB=[
+ {h:'Astronomical Almanac Glossary (USNO)',q:'Geocentric: with reference to, or pertaining to, the center of the Earth. Geocentric Coordinates: ... Celestial coordinates given with respect to the center of the Earth.',u:'https://aa.usno.navy.mil/faq/asa_glossary'},
+ {h:'Celestial sphere (Wikipedia)',q:'an abstract sphere that has an arbitrarily large radius and is concentric to Earth... The celestial sphere can be considered to be centered at the Earth’s center.',u:'https://en.wikipedia.org/wiki/Celestial_sphere'},
+ {h:'Celestial navigation (Wikipedia)',q:'a celestial body is located directly over a single point on the Earth’s surface. The latitude and longitude of that point are known as the celestial body’s geographic position (GP).',u:'https://en.wikipedia.org/wiki/Celestial_navigation'},
+ {h:'Intercept method (Wikipedia)',q:'[the geographical position is] the point on the Earth’s surface directly below it (where the object is in the zenith).',u:'https://en.wikipedia.org/wiki/Intercept_method'}
+];
+
+/* ---------- render ---------- */
+function tagHTML(t){const g=t.startsWith('gold:');const txt=g?t.slice(5):t;return '<span class="tag'+(g?' gold':'')+'">'+txt+'</span>';}
+function cardHTML(it,flip){
+  const imgs=it.imgs||[[it.img,it.cap]];
+  const q=it.quotes.map(p=>'<blockquote class="q">“'+p[0]+'”<span class="pg">'+p[1]+'</span></blockquote>').join('');
+  const slides=imgs.map((im,i)=>'<img class="c-slide'+(i===0?' active':'')+'" loading="lazy" src="img/'+im[0]+'" alt="'+im[1]+'" data-cap="'+im[1]+'">').join('');
+  let nav='';
+  if(imgs.length>1){
+    nav='<button class="c-nav prev" type="button" aria-label="previous">‹</button>'+
+        '<button class="c-nav next" type="button" aria-label="next">›</button>'+
+        '<span class="c-count">1 / '+imgs.length+'</span>'+
+        '<div class="c-dots">'+imgs.map((_,i)=>'<i class="'+(i===0?'on':'')+'"></i>').join('')+'</div>';
+  }
+  return '<article class="card'+(flip?' flip':'')+'" id="'+it.id+'">'+
+    '<div class="c-body"><div class="c-tags">'+it.tags.map(tagHTML).join('')+'</div>'+
+    '<h4 class="c-cite">'+it.cite+'</h4><p class="c-apa">'+it.apa+'</p>'+q+
+    '<p class="c-sum">'+it.sum+'</p></div>'+
+    '<figure class="c-fig" data-idx="0"><span class="c-year">'+it.ybadge+'</span>'+slides+nav+
+    '<figcaption class="figcap">'+imgs[0][1]+'</figcaption></figure></article>';
+}
+let R='',TOC='';
+const SORTED=[...CITES].sort((a,b)=>b.year-a.year);
+SORTED.forEach((it,i)=>{
+  const short=it.cite.split('—')[0].trim();
+  TOC+='<a href="#'+it.id+'"><span class="n">'+it.ybadge+'</span><span class="t">'+short+'</span></a>';
+  R+=cardHTML(it,i%2===1);
+});
+document.getElementById('render').innerHTML=
+  '<section class="band" style="padding-top:0">'+
+  '<div class="center" style="margin-bottom:26px">'+
+  '<p class="kicker">The Citations · newest to oldest</p>'+
+  '<h2 class="section-h">Twenty-one sources, from c. 1230 to the present</h2>'+
+  '<p class="lede">Every entry states the same convention. Each card carries the verbatim quote, the page number, and the highlighted screenshot. Where a source is cited on more than one page, use the arrows to step through them.</p>'+
+  '</div><div class="cards">'+R+'</div></section>';
+document.getElementById('toc').innerHTML=TOC;
+document.getElementById('weblist').innerHTML=WEB.map(w=>
+  '<div class="web"><h4>'+w.h+'</h4><q>“'+w.q+'”</q><br><a href="'+w.u+'" target="_blank" rel="noopener">'+w.u+'</a></div>').join('');
+
+/* ---------- carousels ---------- */
+document.querySelectorAll('.c-fig').forEach(fig=>{
+  const slides=[...fig.querySelectorAll('.c-slide')];
+  if(slides.length<2) return;
+  const dots=[...fig.querySelectorAll('.c-dots i')];
+  const count=fig.querySelector('.c-count');
+  const cap=fig.querySelector('.figcap');
+  const set=i=>{
+    fig.dataset.idx=i;
+    slides.forEach((s,k)=>s.classList.toggle('active',k===i));
+    dots.forEach((d,k)=>d.classList.toggle('on',k===i));
+    if(count)count.textContent=(i+1)+' / '+slides.length;
+    if(cap)cap.textContent=slides[i].dataset.cap;
+  };
+  const go=d=>set((+fig.dataset.idx+d+slides.length)%slides.length);
+  fig.querySelector('.c-nav.prev').addEventListener('click',e=>{e.stopPropagation();go(-1);});
+  fig.querySelector('.c-nav.next').addEventListener('click',e=>{e.stopPropagation();go(1);});
+  dots.forEach((d,k)=>d.addEventListener('click',e=>{e.stopPropagation();set(k);}));
+});
+
+/* ---------- lightbox (with cycling) ---------- */
+const lb=document.getElementById('lb'),lbimg=lb.querySelector('img'),lbcount=lb.querySelector('.lbcount');
+let lbList=[],lbIdx=0;
+function lbShow(i){lbIdx=(i+lbList.length)%lbList.length;lbimg.src=lbList[lbIdx];
+  lbcount.textContent=lbList.length>1?(lbIdx+1)+' / '+lbList.length:'';}
+document.addEventListener('click',e=>{
+  if(e.target.closest('.c-nav,.c-dots'))return;
+  if(e.target.closest('.lbnav.next')){e.stopPropagation();lbShow(lbIdx+1);return;}
+  if(e.target.closest('.lbnav.prev')){e.stopPropagation();lbShow(lbIdx-1);return;}
+  const slide=e.target.closest('.c-slide');
+  const hero=e.target.closest('.hero-quote img');
+  if(slide){
+    const fig=slide.closest('.c-fig');
+    const ss=[...fig.querySelectorAll('.c-slide')];
+    lbList=ss.map(s=>s.src);lb.classList.toggle('multi',lbList.length>1);
+    lbShow(ss.indexOf(slide));lb.classList.add('on');
+  }else if(hero){
+    lbList=[hero.src];lb.classList.remove('multi');lbShow(0);lb.classList.add('on');
+  }else if(e.target.closest('.lb')){lb.classList.remove('on');}
+});
+addEventListener('keydown',e=>{
+  if(!lb.classList.contains('on'))return;
+  if(e.key==='Escape')lb.classList.remove('on');
+  else if(e.key==='ArrowRight'&&lb.classList.contains('multi'))lbShow(lbIdx+1);
+  else if(e.key==='ArrowLeft'&&lb.classList.contains('multi'))lbShow(lbIdx-1);
+});
+</script>
+</body>
+</html>
